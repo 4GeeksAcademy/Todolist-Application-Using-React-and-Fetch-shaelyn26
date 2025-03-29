@@ -18,12 +18,39 @@ const Home = () => {
     const response = await fetch(toDoUrl + "users/shaelyn26")
       // .then((resp) => resp.json())
       // .then((data) => ;
+      if(response.ok == true){
         const data = await response.json()
         setChoresArray(data.todos)
-        console.log("store info ",data.todos)
+        console.log("my dataaa", data.todos)
+      }
+        else{
+          createUser()
+        }
+        console.log("store info ",response)
         return data
   };
 
+  const createUser = async() => {
+    const choices = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        "name": "shaelyn26",
+        "id": 0
+      })
+    }
+    const response = await fetch(toDoUrl + "users/shaelyn26", choices)
+    // .then((resp)=> resp.json())
+    
+    // .then((data) => console.log(data, "item added"))
+    const data = await response.json()
+    getToDos()
+    return data
+  }
+
+  
   const addToDo = async(input) => {
     const choices = {
       method: "POST",
@@ -41,16 +68,16 @@ const Home = () => {
     return data
   }
 
-  const deleteToDo = async(list)=> {
-    const tasks = {
+  const deleteToDo = async(id)=> {
+    const options = {
       method: "DELETE",
       headers: {
         "Content-type": "application/json"
       },
     
     }
-    console.log(list)
-    const response = await fetch(toDoUrl + `todos/${list.id}`, tasks)
+   
+    const response = await fetch(toDoUrl + `todos/${id}`, options)
     // .then((resp) => resp.json())
 
     // .then((data) => console.log(data, "this item was deleted"))
@@ -81,12 +108,13 @@ const Home = () => {
       <ul>
         {choresArray.length > 0
           ? choresArray.map((item) => {
+            console.table("this is my item", item)
               return (
                 <div className="list d-flex" key={item.id}>
                   {item.label}
                   <span
                     className="delete-btn mx-2"
-                    onClick={() => deleteToDo(item)}
+                    onClick={() => deleteToDo(item.id)}
                     onMouseOver={(e) => (e.target.choresArray = "hover")}
                   >
                     x
